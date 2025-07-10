@@ -1,0 +1,21 @@
+# Agent_Go Configuration Example
+# Copy this file to ~/.agent_go.yaml and fill in your API key
+
+openrouter:
+  # Get your API key from: https://openrouter.ai/settings/keys
+  api_key: "your_openrouter_api_key_here"
+  
+  # Default model to use (optional)
+  # Available models: anthropic/claude-3-5-sonnet, openai/gpt-4, etc.
+  model: "anthropic/claude-3-5-sonnet"
+  
+  # Request timeout in seconds (optional)
+  timeout: 30
+
+# UI preferences (optional)
+ui:
+  # Enable colored output
+  colors: true
+  
+  # Default verbosity mode
+  verbose: false

@@ -1,0 +1,31 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+agent_go
+
+# Configuration files with sensitive data
+.agent_go.yaml
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+
+# Log files
+*.log
+logs/
+
+# Environment variables
+.env
+.env.local
+._*
