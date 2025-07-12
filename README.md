@@ -77,15 +77,11 @@ go install ./cmd
 
 Create a `.agent_go.yaml` file in your home directory:
 
-```bash
-# Copy the example configuration
-cp .agent_go.example.yaml ~/.agent_go.yaml
+# Start with a specific message
+cmd "help me refactor this function"
 
-# Edit with your API key
-vim ~/.agent_go.yaml  # or use your preferred editor
-```
+Create a `.agent_go.yaml` file in your home directory:
 
-**Configuration file (`~/.agent_go.yaml`):**
 ```yaml
 openrouter:
   api_key: "your_openrouter_api_key"  # Required: Get from https://openrouter.ai/settings/keys
@@ -103,6 +99,14 @@ ui:
 
 ```bash
 # Start the agent (if installed via go install)
+```
+
+## Usage
+
+### Quick Start
+
+```bash
+# Start the agent (if installed via go install)
 cmd
 
 # Or if built from source
@@ -112,48 +116,30 @@ cmd
 cmd "help me refactor this function"
 
 # Use in any directory - the agent will detect your project type
-cd /path/to/your/project
-cmd
 ```
 
-### Using in Your Own Repositories
-
-The agent works in any directory and automatically detects your project type:
-
-```bash
-# Navigate to any project
-cd /path/to/your/go-project
-cmd "help me optimize this function"
-
-# Works with different project types
-cd /path/to/your/python-project
-cmd "add error handling to this script"
-
-# Focus on specific files for context
-cmd
-> /focus main.py utils.py
-> "refactor these files to use dependency injection"
+### Example Commands
 ```
-
-### Slash Commands
-
-```bash
-/help           # show available commands
-/focus file.go  # focus on a specific file
-/context        # show current context
-/context stats  # Show context window usage
-/model          # switch AI model
-/verbose on     # enable verbose mode
 /workspace      # show workspace info
+/focus main.go  # focus on specific file
+/context task "Fix error handling"  # set current task
+/model claude-3-opus  # switch to a different model
+/help           # show all available commands
 ```
 
 ## Context Window Management
 
-Tracks token/context-window usage with percentage in the UI
-Preserves important messages (system messages, errors, task instructions)
-Summarizes removed messages to maintain context
-Trims older messages when approaching token limits
+- Tracks token/context-window usage with percentage in the UI
+- Preserves important messages (system messages, errors, task instructions)
+- Summarizes removed messages to maintain context
+- Trims older messages when approaching token limits
 
+## License
+
+Licensed under MIT License
+- Preserves important messages (system messages, errors, task instructions)
+- Summarizes removed messages to maintain context
+- Trims older messages when approaching token limits
 
 ## License
 
