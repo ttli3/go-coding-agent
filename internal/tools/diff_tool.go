@@ -7,8 +7,8 @@ import (
 	"github.com/ttli3/go-coding-agent/internal/ui"
 )
 
-// DiffTool lets you see what changed between file versions
 type DiffTool struct{}
+
 
 func (t *DiffTool) Name() string {
 	return "show_diff"
@@ -44,7 +44,7 @@ func (t *DiffTool) Execute(args map[string]interface{}) (string, error) {
 		maxLines = int(ml)
 	}
 
-	// make diff look good
+	// make diff look good  
 	formatter := ui.NewDiffFormatter()
 	diff := formatter.FormatDiff(filename, oldContent, newContent, maxLines)
 

@@ -74,11 +74,11 @@ func (df *DiffFormatter) FormatDiff(filename string, oldContent, newContent stri
 		}
 		
 		// Show last few lines
-		startIdx := len(lines) - (maxLines - showLines)
-		if startIdx < showLines {
-			startIdx = showLines
+		start := len(lines) - (maxLines - showLines)
+		if start < showLines {
+			start = showLines
 		}
-		for i := startIdx; i < len(lines); i++ {
+		for i := start; i < len(lines); i++ {
 			result.WriteString(df.formatLine(lines[i]))
 		}
 	} else {
