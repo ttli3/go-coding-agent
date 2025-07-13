@@ -77,7 +77,7 @@ func printWelcome(cfg *config.Config) {
 	color.New(color.FgCyan, color.Bold).Println("Agent_Go")
 	color.New(color.FgHiBlack).Printf("AI Coding Assistant • Model: %s\n", cfg.OpenRouter.Model)
 	fmt.Println()
-	color.New(color.FgHiBlack).Println("Type your message, 'help' for commands, or 'exit' to quit")
+	color.New(color.FgHiBlack).Println("Type your message, '/help' for commands, or '/exit' to quit")
 	color.New(color.FgHiBlack).Println(strings.Repeat("─", 60))
 	fmt.Println()
 }
@@ -104,12 +104,6 @@ func runInteractiveMode(aiAgent *agent.Agent) {
 		case "exit", "quit", "q":
 			color.New(color.FgHiBlack).Println("\nGoodbye!")
 			return
-		case "help", "h":
-			printHelp()
-			continue
-		case "history":
-			printHistory(aiAgent)
-			continue
 		}
 
 		// Try to execute as a slash command
@@ -122,6 +116,11 @@ func runInteractiveMode(aiAgent *agent.Agent) {
 			if err != nil {
 				color.Red("Command error: %v", err)
 			} else {
+				// Handle exit command
+				if result == "EXIT_APPLICATION" {
+					color.New(color.FgHiBlack).Println("\nGoodbye!")
+					return
+				}
 				color.Green("%s", result)
 			}
 			continue
@@ -227,82 +226,7 @@ func handleBlockingMessage(aiAgent *agent.Agent, message string) {
 	fmt.Println()
 }
 
-func printHelp() {
-	fmt.Println()
-	color.New(color.FgCyan, color.Bold).Println("Commands")
-	color.New(color.FgHiBlack).Println(strings.Repeat("─", 20))
-	color.New(color.FgWhite).Println("  help, h      Show this help message")
-	color.New(color.FgWhite).Println("  clear, cls   Clear conversation history")
-	color.New(color.FgWhite).Println("  history      Show conversation history")
-	color.New(color.FgWhite).Println("  exit, quit   Exit the program")
 
-	fmt.Println()
-	color.New(color.FgCyan, color.Bold).Println("Available Tools")
-	color.New(color.FgHiBlack).Println(strings.Repeat("─", 20))
-	color.New(color.FgWhite).Println("  File Operations   read_file, write_file, list_directory, find_files")
-	color.New(color.FgWhite).Println("  Code Editing      edit_file, search_code, replace_content, grep_search")
-	color.New(color.FgWhite).Println("  System Commands   run_command, get_working_directory")
-
-	fmt.Println()
-	color.New(color.FgCyan, color.Bold).Println("Examples")
-	color.New(color.FgHiBlack).Println(strings.Repeat("─", 20))
-	color.New(color.FgHiBlack).Println("  \"Read the contents of main.go\"")
-	color.New(color.FgHiBlack).Println("  \"Create a simple web server in Go\"")
-	color.New(color.FgHiBlack).Println("  \"Find all Python files in the current directory\"")
-	color.New(color.FgHiBlack).Println("  \"Run the tests for this project\"")
-	fmt.Println()
-}
-
-func printHistory(aiAgent *agent.Agent) {
-	history := aiAgent.GetConversationHistory()
-	if len(history) == 0 {
-		color.New(color.FgHiBlack).Println("\nNo conversation history")
-		return
-	}
-
-	fmt.Println()
-	color.New(color.FgCyan, color.Bold).Println("Conversation History")
-	color.New(color.FgHiBlack).Println(strings.Repeat("─", 50))
-
-	formatter := ui.NewResponseFormatter()
-
-	for _, msg := range history {
-		if msg.Role == "system" {
-			continue
-		}
-
-		roleLabel := "You"
-		roleColor := color.New(color.FgGreen, color.Bold)
-		if msg.Role == "assistant" {
-			roleLabel = "Assistant"
-			roleColor = color.New(color.FgCyan, color.Bold)
-		}
-
-		// Display role with nice formatting
-		fmt.Println()
-		roleColor.Printf("┌─ %s ", roleLabel)
-		color.New(color.FgHiBlack).Println(strings.Repeat("─", 40))
-
-		content := msg.Content
-		if msg.Role == "assistant" {
-			// Format assistant responses beautifully
-			if len(content) > 300 {
-				content = content[:300] + "..."
-			}
-			formattedContent := formatter.FormatResponse(content)
-			fmt.Print(formattedContent)
-		} else {
-			// Keep user messages simple
-			if len(content) > 150 {
-				content = content[:150] + "..."
-			}
-			color.New(color.FgWhite).Println(content)
-		}
-
-		color.New(color.FgHiBlack).Println("└" + strings.Repeat("─", 47))
-	}
-	fmt.Println()
-}
 
 // getContextStatus returns a formatted context window status for the prompt
 func getContextStatus(aiAgent *agent.Agent) string {

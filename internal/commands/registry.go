@@ -15,6 +15,7 @@ func NewDefaultRegistry() *CommandRegistry {
 
 	registry.Register(&VerbosityCommand{})
 	registry.Register(&HelpCommand{})
+	registry.Register(&ExitCommand{})
 	
 	return registry
 }

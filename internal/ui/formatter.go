@@ -3,6 +3,7 @@ package ui
 
 import (
 	"bufio"
+	"os"
 	"regexp"
 	"strings"
 
@@ -26,6 +27,11 @@ type ResponseFormatter struct {
 }
 
 func NewResponseFormatter() *ResponseFormatter {
+	// Force color output if we're in a terminal
+	if isTerminal() {
+		color.NoColor = false
+	}
+	
 	return &ResponseFormatter{
 		headerColor:    color.New(color.FgCyan, color.Bold),
 		codeColor:      color.New(color.FgYellow),
@@ -402,4 +408,12 @@ func (f *ResponseFormatter) FormatStreamingChunk(chunk string) string {
 	})
 
 	return result
+}
+
+// isTerminal checks if stdout is a terminal
+func isTerminal() bool {
+	if fileInfo, _ := os.Stdout.Stat(); (fileInfo.Mode() & os.ModeCharDevice) != 0 {
+		return true
+	}
+	return false
 }
