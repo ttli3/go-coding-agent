@@ -9,11 +9,7 @@ func NewDefaultRegistry() *CommandRegistry {
 	registry.Register(&ContextCommand{})
 	registry.Register(&FocusCommand{})
 
-	registry.Register(&WorkspaceCommand{})
-	registry.Register(&BookmarkCommand{})
 	registry.Register(&ModelCommand{})
-
-	registry.Register(&VerbosityCommand{})
 	registry.Register(&HelpCommand{})
 	registry.Register(&ExitCommand{})
 	

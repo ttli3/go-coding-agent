@@ -20,7 +20,7 @@ type SessionContext struct {
 	TaskHistory     []CompletedTask   `json:"task_history"`
 	UserPreferences map[string]string `json:"user_preferences"`
 	ProjectType     string            `json:"project_type"`
-	Bookmarks       map[string]string `json:"bookmarks"`
+
 	SessionID       string            `json:"session_id"`
 	CreatedAt       time.Time         `json:"created_at"`
 	UpdatedAt       time.Time         `json:"updated_at"`
@@ -44,7 +44,7 @@ func NewSessionContext() *SessionContext {
 		RecentFiles:     []string{},
 		TaskHistory:     []CompletedTask{},
 		UserPreferences: make(map[string]string),
-		Bookmarks:       make(map[string]string),
+
 		SessionID:       generateSessionID(),
 		CreatedAt:       time.Now(),
 		UpdatedAt:       time.Now(),
@@ -119,17 +119,7 @@ func (sc *SessionContext) AddRecentFile(filepath string) {
 	sc.UpdatedAt = time.Now()
 }
 
-// SetBookmark sets a bookmark
-func (sc *SessionContext) SetBookmark(name, path string) {
-	sc.Bookmarks[name] = path
-	sc.UpdatedAt = time.Now()
-}
 
-// GetBookmark gets a bookmark
-func (sc *SessionContext) GetBookmark(name string) (string, bool) {
-	path, exists := sc.Bookmarks[name]
-	return path, exists
-}
 
 // GetContextSummary returns a summary of the current context
 func (sc *SessionContext) GetContextSummary() string {
@@ -184,9 +174,7 @@ func (sc *SessionContext) GetContextSummary() string {
 			lastTask.CompletedAt.Format("15:04")))
 	}
 	
-	if len(sc.Bookmarks) > 0 {
-		summary.WriteString(fmt.Sprintf("Bookmarks: %d\n", len(sc.Bookmarks)))
-	}
+
 	
 	return summary.String()
 }
