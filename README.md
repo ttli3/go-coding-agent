@@ -1,18 +1,22 @@
 # Agent_Go
 
-Agent_Go is a terminal-based AI coding agent/assistant written in Go, heavily inspired by Claude Code and OpenCode. Built to help with developer tasks through natural language interaction and functional tool execution. The main goal of this project was to highlight and understand how powerful LLMs can be when enabled with tools/environment interaction + session context.
+Agent_Go is a terminal-based AI coding agent/assistant written in Go, heavily inspired by Claude Code and OpenCode. Built to help with developer tasks through natural language interaction and functional tool execution. The main goal of this project was to highlight and understand how powerful LLMs can be when enabled with tools/environment interaction + smart session memory.
 
 ## Features
 
-- **Terminal-Based Interface**: beautiful terminal UI with color-coded responses
-- **Tool Execution**: read files, list dirs, edit code, run commands, etc..
-- **Context Management**: tracks conversation context with token management
-- **Session Context**: maintains awareness of focused files, current tasks, and project structure
-- **Slash Commands**: comprehensive command system for controlling agentic behavior and enabling visibility
+- **Terminal-Based Interface**: Beautiful terminal UI with color-coded responses
+- **Tool Execution**: Read files, list dirs, edit code, run commands, etc.
+- **Smart Session Memory**: Automatically tracks files and context without manual commands
+- **Persistent Sessions**: Sessions are auto-saved and restored between runs
+- **Dynamic System Prompts**: Context is automatically injected into AI prompts
+- **Context Management**: Tracks conversation context with token management
+- **Consistent Command Interface**: All commands use slash prefix for consistency
 
 ### Available Commands
 
-- **Session/chat Management**: `/clear`
+- **Session/chat Management**: 
+  - `/clear` - Clear the conversation history
+  - `/exit` - Exit the application
 - **Context & Focus**: 
   - `/context` - Show session context, manage tasks, view stats
     - `/context stats` - Show context window statistics
@@ -21,15 +25,11 @@ Agent_Go is a terminal-based AI coding agent/assistant written in Go, heavily in
     - `/context task complete` - Complete current task
   - `/focus <files...>` - Set focus to specific files
     - `/focus clear` - Clear focused files
-- **Workspace & Navigation**: 
-  - `/workspace` - Show workspace information
-  - `/bookmark <name> <path>` - Set bookmarks
-    - `/bookmark list` - List bookmarks
-    - `/bookmark goto <name>` - Navigate to bookmark
 - **LLM Behavior Config**: 
   - `/model [model-name]` - Switch AI model
-  - `/verbose [on|off]` - Control response verbosity
-- **System Info**: `/help [command]` - Show help information
+- **System Info**: 
+  - `/help [command]` - Show help information
+  - `/history` - Show command history
 
 ## Installation
 
@@ -77,28 +77,14 @@ go install ./cmd
 
 Create a `.agent_go.yaml` file in your home directory:
 
-# Start with a specific message
-cmd "help me refactor this function"
-
-Create a `.agent_go.yaml` file in your home directory:
-
 ```yaml
 openrouter:
   api_key: "your_openrouter_api_key"  # Required: Get from https://openrouter.ai/settings/keys
-  model: "anthropic/claude-3-5-sonnet"  # Optional: Default model
+  model: "anthropic/claude-3-7-sonnet"  # Optional: Default model
   timeout: 30                          # Optional: Request timeout
 
 ui:
   colors: true     # Optional: Enable colored output
-  verbose: false   # Optional: Default verbosity
-```
-
-## Usage
-
-### Quick Start
-
-```bash
-# Start the agent (if installed via go install)
 ```
 
 ## Usage
@@ -115,28 +101,69 @@ cmd
 # Start with a specific message
 cmd "help me refactor this function"
 
-# Use in any directory - the agent will detect your project type
+# Use in any directory - the agent will automatically detect your project type
+# and track files you interact with
 ```
+
+### Session Persistence
+
+Your session is automatically saved to `~/.agent_go_session.json` and will be restored the next time you start the agent. This includes:
+
+- Recently focused files
+- Current and completed tasks
+- Project information
+- Working directory
 
 ### Example Commands
 ```
-/workspace      # show workspace info
-/focus main.go  # focus on specific file
-/context task "Fix error handling"  # set current task
-/model claude-3-opus  # switch to a different model
-/help           # show all available commands
+/focus main.go  # Manually focus on a specific file (optional with auto-tracking)
+/context        # View current session context (files, tasks, etc.)
+/context task "Fix error handling"  # Set current task
+/model claude-3-sonnet  # Switch to a different model
+/help           # Show all available commands
+/exit           # Exit the application
 ```
+
+### AI Tool Execution
+
+Agent_Go enables the AI to perform actions on your system through tool execution:
+
+- **File Operations**: Read, write, and edit files
+- **Directory Operations**: List directories, find files
+- **Command Execution**: Run shell commands and capture output
+- **Code Analysis**: Search for patterns, analyze code structure
+
+All file interactions are automatically tracked in the session memory, building context for the AI without manual intervention.
+
+## Smart Session Memory
+
+### Automatic File Tracking
+
+- Automatically tracks files when AI tools interact with them
+- No need to manually set focus or remember important files
+- Tracks files for operations like read_file, write_file, edit_file, find_files, and list_directory
+- Converts paths to absolute paths for consistency
+
+### Persistent Sessions
+
+- Sessions are automatically saved to `~/.agent_go_session.json` after each interaction
+- Sessions are automatically loaded when the agent starts
+- Graceful session loading - if loading fails, agent starts fresh
+- All context is preserved between application restarts
+
+### Dynamic Context Injection
+
+The system prompt is dynamically enhanced with session context including:
+- Project name and type
+- Working directory
+- Current task (if any)
+- Recently active files (top 3)
+- Other recent files (excluding focused ones)
+- Task history summary
 
 ## Context Window Management
 
 - Tracks token/context-window usage with percentage in the UI
-- Preserves important messages (system messages, errors, task instructions)
-- Summarizes removed messages to maintain context
-- Trims older messages when approaching token limits
-
-## License
-
-Licensed under MIT License
 - Preserves important messages (system messages, errors, task instructions)
 - Summarizes removed messages to maintain context
 - Trims older messages when approaching token limits

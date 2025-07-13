@@ -58,8 +58,7 @@ func (c *HelpCommand) formatAllCommands(registry *CommandRegistry) string {
 	categories := map[string][]Command{
 		"Chat & Session Management": {},
 		"Context & Focus": {},
-		"Workspace & Navigation": {},
-		"Behavior Control": {},
+		"Model Control": {},
 		"System Information": {},
 	}
 	
@@ -67,15 +66,13 @@ func (c *HelpCommand) formatAllCommands(registry *CommandRegistry) string {
 	commands := registry.ListCommands()
 	for _, cmd := range commands {
 		switch cmd.Name() {
-		case "clear":
+		case "clear", "exit":
 			categories["Chat & Session Management"] = append(categories["Chat & Session Management"], cmd)
 		case "context", "focus", "task", "stats":
 			categories["Context & Focus"] = append(categories["Context & Focus"], cmd)
-		case "workspace", "bookmark":
-			categories["Workspace & Navigation"] = append(categories["Workspace & Navigation"], cmd)
-		case "model", "verbose", "quiet":
-			categories["AI Behavior Control"] = append(categories["AI Behavior Control"], cmd)
-		case "help":
+		case "model":
+			categories["Model Control"] = append(categories["Model Control"], cmd)
+		case "help", "history":
 			categories["System Information"] = append(categories["System Information"], cmd)
 		default:
 			categories["System Information"] = append(categories["System Information"], cmd)
@@ -86,8 +83,7 @@ func (c *HelpCommand) formatAllCommands(registry *CommandRegistry) string {
 	categoryOrder := []string{
 		"Chat & Session Management",
 		"Context & Focus", 
-		"Workspace & Navigation",
-		"AI Behavior Control",
+		"Model Control",
 		"System Information",
 	}
 	
@@ -119,7 +115,6 @@ func (c *HelpCommand) formatAllCommands(registry *CommandRegistry) string {
 	color.New(color.FgHiBlack).Fprint(&result, "• Context window usage is shown in your prompt: ")
 	color.New(color.FgGreen).Fprint(&result, "[25.3%] ")
 	color.New(color.FgHiBlack).Fprint(&result, "agent_go> \n")
-	color.New(color.FgHiBlack).Fprint(&result, "• Use /verbose to toggle detailed AI responses\n")
 	color.New(color.FgHiBlack).Fprint(&result, "• Use /focus to set files for the AI to pay attention to\n")
 	
 	return result.String()

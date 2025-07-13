@@ -21,7 +21,6 @@ type Agent struct {
 	Config         *config.Config
 	sessionContext *context.SessionContext
 	contextWindow  *context.ContextWindow
-	verbose        bool
 }
 
 func NewAgent(cfg *config.Config) *Agent {
@@ -194,9 +193,7 @@ func (a *Agent) executeOpenRouterToolCalls(toolCalls []openrouter.ToolCall, orig
 	
 	filter := ui.NewResponseFilter()
 	if originalResponse != "" {
-		if a.verbose {
-			results = append(results, originalResponse)
-		} else if !filter.ShouldSuppressResponse(originalResponse) {
+		if !filter.ShouldSuppressResponse(originalResponse) {
 			filteredResponse := filter.FilterResponse(originalResponse)
 			if filteredResponse != "" {
 				results = append(results, filteredResponse)
@@ -247,7 +244,7 @@ func (a *Agent) executeOpenRouterToolCalls(toolCalls []openrouter.ToolCall, orig
 		toolDisplay.ShowToolSummary()
 
 		toolResultsMessage := strings.Join(toolResults, "\n")
-		a.AddMessage("user", fmt.Sprintf("Tool execution results:\n%s\n\nContinue task execution. Call the next required function immediately or provide task completion summary.", toolResultsMessage))
+		a.AddMessage("user", fmt.Sprintf("Tool execution results:\n%s\n\nIMPORTANT: If the task is not complete, you MUST call the next function immediately. Do not describe what you want to do - just call the function. Only provide a summary if the task is 100%% complete.", toolResultsMessage))
 
 		followUpResponse, err := a.client.Chat(
 			a.GetConversationHistory(),
@@ -338,24 +335,9 @@ func (a *Agent) CompleteCurrentTask(filesChanged []string) {
 	a.sessionContext.CompleteCurrentTask(filesChanged)
 }
 
-func (a *Agent) SetBookmark(name, path string) {
-	a.sessionContext.SetBookmark(name, path)
-}
 
-func (a *Agent) GetBookmark(name string) (string, bool) {
-	return a.sessionContext.GetBookmark(name)
-}
 
-func (a *Agent) ListBookmarks() map[string]string {
-	return a.sessionContext.Bookmarks
-}
 
-func (a *Agent) GetWorkspaceInfo() string {
-	return fmt.Sprintf("Working Directory: %s\nProject Root: %s\nProject Type: %s",
-		a.sessionContext.WorkingDir,
-		a.sessionContext.ProjectRoot,
-		a.sessionContext.ProjectType)
-}
 
 func (a *Agent) AddRecentFile(filepath string) {
 	a.sessionContext.AddRecentFile(filepath)
@@ -369,13 +351,7 @@ func (a *Agent) GetContextUsagePercentage() float64 {
 	return a.contextWindow.GetUsagePercentage()
 }
 
-func (a *Agent) SetVerbose(verbose bool) {
-	a.verbose = verbose
-}
 
-func (a *Agent) IsVerbose() bool {
-	return a.verbose
-}
 
 // buildContextInfo creates dynamic context information for the AI
 func (a *Agent) buildContextInfo() string {
@@ -442,10 +418,7 @@ func (a *Agent) buildContextInfo() string {
 		}
 	}
 	
-	// Bookmarks
-	if len(a.sessionContext.Bookmarks) > 0 {
-		info.WriteString(fmt.Sprintf("Available Bookmarks: %d\n", len(a.sessionContext.Bookmarks)))
-	}
+
 	
 	// Task history summary
 	if len(a.sessionContext.TaskHistory) > 0 {
