@@ -1,3 +1,4 @@
+// Package agent implements the core AI assistant functionality for the go coding agent.
 package agent
 
 import (
@@ -266,7 +267,7 @@ func (a *Agent) executeOpenRouterToolCalls(toolCalls []openrouter.ToolCall, orig
 		followUpMessage := followUpResponse.Choices[0].Message
 		followUp := followUpMessage.Content
 		a.AddMessage("assistant", followUp)
-		results = append(results, fmt.Sprintf("\n\n%s", followUp))
+		results = append(results, followUp)
 
 		if len(followUpMessage.ToolCalls) > 0 {
 			currentToolCalls = followUpMessage.ToolCalls
